@@ -13,7 +13,7 @@ A comprehensive Python-Selenium framework for automated web accessibility testin
 - 🔍 **Automated Scanning** with axe-core integration
 - 🖐️ **Manual Testing** for critical WCAG 2.0 criteria
 - 🧩 **Page Object Model** for maintainable test architecture
-- 🌈 **Multi-browser Support** (Chrome, Firefox)
+- 🌈 **Cross-browser Support** (Firefox recommended, Chrome supported)
 - 📊 **Visual Reporting** with screenshots and evidence
 - 📱 **Responsive Testing** across device sizes
 - 🔄 **CI/CD Integration** with GitHub Actions
@@ -36,6 +36,10 @@ A comprehensive Python-Selenium framework for automated web accessibility testin
 git clone https://github.com/yourusername/accessibility-testing-framework.git
 cd accessibility-testing-framework
 
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -49,50 +53,58 @@ python run_tests.py
 # Test a specific URL
 python accessibility_cli.py --url https://example.com
 
-# Run with options
-python accessibility_cli.py --browser chrome --wcag AA --headless
+# Run with options (Firefox recommended for macOS with Apple Silicon)
+python accessibility_cli.py --browser firefox --wcag AA --headless
 ```
 
 ### Viewing Results
 
 After running tests, open the dashboard:
 ```
-reports/dashboard.html
+open reports/dashboard.html  # On macOS
+# Or simply open the file in your browser
 ```
 
 ## 📁 Project Structure
 
 ```
 accessibility-test-framework/
-├── src/                            # Source code
-│   ├── core/                       # Core functionality
+├── .github/                      # GitHub configurations
+│   └── workflows/                # GitHub Actions workflows
+│       └── accessibility-tests.yml  # CI pipeline configuration
+├── src/                          # Source code
+│   ├── core/                     # Core functionality
+│   │   ├── __init__.py           # Package initializer
 │   │   ├── accessibility_scanner.py  # Main scanner with axe integration
-│   │   └── webdriver_manager.py    # Browser driver handling
-│   ├── pages/                      # Page objects
-│   │   ├── base_page.py            # Base page object
+│   │   └── webdriver_manager.py  # Browser driver management
+│   ├── pages/                    # Page objects
+│   │   ├── __init__.py           # Package initializer
+│   │   ├── base_page.py          # Base page object
 │   │   └── accessibility_test_page.py  # Extended page with manual checks
-│   └── utils/                      # Utilities
-│       ├── report_utils.py         # Reporting functionality
-│       ├── dashboard.py            # Dashboard generator
-│       └── wcag_reference.py       # WCAG guidelines reference
-├── tests/                          # Test files
-│   ├── config.py                   # Test configuration
-│   ├── test_accessibility.py       # Test cases
-│   └── sites/                      # Test site definitions
-│       └── test_sites.py           # Sample HTML with accessibility issues
-├── reports/                        # Generated reports and screenshots
-│   └── screenshots/                # Screenshot directory with .gitkeep
-├── .github/workflows/              # GitHub Actions configuration
-│   └── accessibility-tests.yml     # CI workflow
-├── requirements.txt                # Dependencies
-├── .gitignore                      # Git ignore file
-├── LICENSE                         # MIT License
-├── CONTRIBUTING.md                 # Contribution guidelines
-├── DOCUMENTATION.md                # Detailed documentation
-├── run_tests.py                    # Script to run tests
-├── accessibility_cli.py            # Command-line interface
-├── example.py                      # Example usage script
-└── README.md                       # Project overview with badges and emoji
+│   └── utils/                    # Utilities
+│       ├── __init__.py           # Package initializer
+│       ├── dashboard.py          # Dashboard generator
+│       ├── report_utils.py       # Reporting tools
+│       └── wcag_reference.py     # WCAG guidelines reference
+├── tests/                        # Test files
+│   ├── __init__.py               # Package initializer
+│   ├── config.py                 # Test configuration
+│   ├── test_accessibility.py     # Main test cases
+│   └── sites/                    # Test site definitions
+│       ├── __init__.py           # Package initializer
+│       └── test_sites.py         # Sample HTML generators
+├── reports/                      # Generated reports
+│   └── screenshots/              # Screenshot storage
+│       └── .gitkeep              # Placeholder for empty dir
+├── .gitignore                    # Git ignore rules
+├── LICENSE                       # MIT license file
+├── README.md                     # Project documentation
+├── CONTRIBUTING.md               # Contribution guidelines
+├── DOCUMENTATION.md              # User documentation
+├── accessibility_cli.py          # Command-line interface
+├── example.py                    # Example usage
+├── requirements.txt              # Dependencies
+└── run_tests.py                  # Test runner script
 ```
 
 ## 🛠️ Advanced Usage
@@ -108,7 +120,11 @@ python accessibility_cli.py --rules "image-alt,color-contrast,keyboard"
 
 Test on different browsers:
 ```
+# Firefox (recommended for macOS with Apple Silicon)
 python accessibility_cli.py --browser firefox
+
+# Chrome (on Windows/Linux or with manual ChromeDriver installation)
+python accessibility_cli.py --browser chrome
 ```
 
 ### Responsive Testing
@@ -129,6 +145,15 @@ The framework generates comprehensive reports including:
 - 📱 Responsive testing results
 - 🔗 Links to WCAG documentation
 
+## 🖥️ Browser Compatibility
+
+- **Firefox**: Primary recommended browser, works on all platforms including macOS with Apple Silicon
+- **Chrome**: Works on Windows/Linux. For macOS with Apple Silicon, requires manual ChromeDriver installation:
+  ```
+  brew install --cask chromedriver
+  xattr -d com.apple.quarantine /opt/homebrew/bin/chromedriver
+  ```
+
 ## 🤝 Contributing
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
@@ -136,6 +161,29 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 ## 📚 Documentation
 
 For detailed usage, see [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## 📝 Example Usage
+
+```python
+from src.core.webdriver_manager import setup_driver
+from src.core.accessibility_scanner import AccessibilityScanner
+from src.pages.accessibility_test_page import AccessibilityTestPage
+
+# Setup Firefox driver (recommended for macOS)
+driver = setup_driver("firefox")
+
+# Create scanner and page objects
+scanner = AccessibilityScanner(driver)
+page = AccessibilityTestPage(driver)
+
+# Test a website
+page.open("https://example.com")
+scanner.inject_axe()
+results = scanner.run_full_scan()
+
+# Print violations
+scanner.print_violation_summary(results)
+```
 
 ## 📃 License
 
