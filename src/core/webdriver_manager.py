@@ -1,6 +1,9 @@
 # This is the main file for our webdriver setup
 # It handles browser setup and configuration
 
+import os
+import platform
+import sys
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
@@ -31,10 +34,25 @@ def setup_driver(browser="chrome", headless=False):
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-gpu")
-        
-        # Setup and return the driver
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
-        return driver
+
+        try:
+            # For Mac with Apple Silicon (M1/M2/M3)
+            if platform.system() == "Darwin" and platform.machine() == "arm64":
+                print("Detected Mac with Apple Silicon. Setting up appropriate ChromeDriver.")
+                # Use Chrome driver directly without webdriver_manager
+                # Try to find the chromedriver binary directly 
+                chrome_service = ChromeService("/opt/homebrew/bin/chromedriver")
+                driver = webdriver.Chrome(service=chrome_service, options=options)
+            else:
+                # Standard setup for other platforms
+                chrome_service = ChromeService(ChromeDriverManager().install())
+                driver = webdriver.Chrome(service=chrome_service, options=options)
+            
+            return driver
+        except Exception as e:
+            print(f"Error setting up Chrome: {e}")
+            print("Trying Firefox instead...")
+            return setup_driver("firefox", headless)
     
     elif browser.lower() == "firefox":
         # Setup Firefox options
@@ -44,9 +62,14 @@ def setup_driver(browser="chrome", headless=False):
         if headless:
             options.add_argument("--headless")
         
-        # Setup and return the driver
-        driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
-        return driver
+        try:
+            # Setup and return the driver
+            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+            return driver
+        except Exception as e:
+            print(f"Error setting up Firefox: {e}")
+            print("Please install Firefox or Chrome manually.")
+            sys.exit(1)
     
     else:
         # If we get an unsupported browser, default to Chrome

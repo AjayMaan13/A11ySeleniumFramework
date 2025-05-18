@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Labels Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Form Labels Example</h1>
+    <p>This page contains forms with various labeling issues.</p>
+    
+    <h2>Form with Missing Labels</h2>
+    <form>
+        <div class="form-group">
+            <!-- Input without label -->
+            <input type="text" placeholder="Name" name="name">
+        </div>
+        
+        <div class="form-group">
+            <!-- Input with placeholder but no label -->
+            <input type="email" placeholder="Email Address" name="email">
+        </div>
+        
+        <div class="form-group">
+            <!-- Select without label -->
+            <select name="country">
+                <option value="">Select Country</option>
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+                <option value="uk">United Kingdom</option>
+            </select>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+    
+    <h2>Form with Proper Labels</h2>
+    <form>
+        <div class="form-group">
+            <label for="name2">Name</label>
+            <input id="name2" type="text" name="name">
+        </div>
+        
+        <div class="form-group">
+            <label for="email2">Email Address</label>
+            <input id="email2" type="email" name="email">
+        </div>
+        
+        <div class="form-group">
+            <label for="country2">Country</label>
+            <select id="country2" name="country">
+                <option value="">Select Country</option>
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+                <option value="uk">United Kingdom</option>
+            </select>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

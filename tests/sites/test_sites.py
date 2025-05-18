@@ -183,15 +183,21 @@ def create_test_pages():
         List of file paths created
     """
     import os
+    import sys
+    from pathlib import Path
     
-    # Create the directory if it doesn't exist
-    os.makedirs("tests/sites", exist_ok=True)
+    # Get the absolute path to the project directory
+    project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Create test sites directory within the project
+    sites_dir = os.path.join(project_dir, "tests", "sites")
+    os.makedirs(sites_dir, exist_ok=True)
     
     created_files = []
     
     # Write each test page to a file
     for filename, content in TEST_PAGES.items():
-        filepath = os.path.join("tests/sites", filename)
+        filepath = os.path.join(sites_dir, filename)
         
         with open(filepath, "w") as f:
             f.write(content)

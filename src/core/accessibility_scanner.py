@@ -52,7 +52,8 @@ class AccessibilityScanner:
         """
         # Set default values
         if context is None:
-            context = document
+            # Use the document body instead of 'document'
+            context = "body"
         
         if options is None:
             options = {

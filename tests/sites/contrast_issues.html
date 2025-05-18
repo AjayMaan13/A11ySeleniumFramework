@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrast Issues Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .low-contrast-1 {
+            color: #aaa;
+            background-color: #fff;
+        }
+        .low-contrast-2 {
+            color: #999;
+            background-color: #eee;
+        }
+        .low-contrast-3 {
+            color: #55a;
+            background-color: #338;
+        }
+        .good-contrast {
+            color: #000;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contrast Issues Example</h1>
+    <p>This page contains text with various contrast issues.</p>
+    
+    <div class="low-contrast-1">
+        <p>This text has low contrast (light gray on white background).</p>
+    </div>
+    
+    <div class="low-contrast-2">
+        <p>This text also has low contrast (gray on light gray background).</p>
+    </div>
+    
+    <div class="low-contrast-3">
+        <p>This text has low contrast with similar hues (blue on blue).</p>
+    </div>
+    
+    <div class="good-contrast">
+        <p>This text has good contrast (black on white background).</p>
+    </div>
+</body>
+</html>
