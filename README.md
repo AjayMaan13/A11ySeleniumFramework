@@ -1,125 +1,146 @@
-# Accessibility Testing Framework
+# 🌐 Accessibility Testing Framework
 
-A Python-Selenium based framework for testing web accessibility compliance with WCAG 2.0 standards.
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![Selenium](https://img.shields.io/badge/selenium-4.x-green)
+![WCAG](https://img.shields.io/badge/WCAG-2.0-orange)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-## Overview
+A comprehensive Python-Selenium framework for automated web accessibility testing against WCAG 2.0 standards.
 
-This framework provides automated testing of web pages for accessibility issues according to WCAG 2.0 guidelines. It uses Selenium for browser automation and axe-core for accessibility testing, along with custom manual checks for a comprehensive evaluation approach.
+## ✨ Features
 
-## Features
+- 🔍 **Automated Scanning** with axe-core integration
+- 🖐️ **Manual Testing** for critical WCAG 2.0 criteria
+- 🧩 **Page Object Model** for maintainable test architecture
+- 🌈 **Multi-browser Support** (Chrome, Firefox)
+- 📊 **Visual Reporting** with screenshots and evidence
+- 📱 **Responsive Testing** across device sizes
+- 🔄 **CI/CD Integration** with GitHub Actions
+- 💻 **Command-line Interface** for custom testing
 
-- Automated accessibility testing using axe-core integration
-- Manual testing for critical WCAG 2.0 criteria
-- Page Object Model implementation for better test maintainability
-- Support for multiple browsers (Chrome, Firefox)
-- HTML reports with screenshots of violations
-- Interactive dashboard with test summaries
-- Command-line interface for custom testing options
-- Responsive design accessibility testing
-- Tests for key WCAG 2.0 criteria:
-  - Missing alt text for images (1.1.1)
-  - Color contrast issues (1.4.3)
-  - Form inputs without labels (3.3.2)
-  - Keyboard accessibility (2.1.1)
-  - Heading structure (1.3.1)
+## 📋 WCAG Criteria Tested
 
-## Setup
+- ✅ **1.1.1 Non-text Content** - Images have text alternatives
+- ✅ **1.4.3 Contrast** - Text has sufficient color contrast
+- ✅ **3.3.2 Labels** - Form elements have proper labels
+- ✅ **2.1.1 Keyboard** - All functions accessible by keyboard
+- ✅ **1.3.1 Info & Relationships** - Proper heading structure
 
-1. Clone the repository
-2. Install dependencies:
+## 🚀 Quick Start
+
+### Installation
+
 ```
+# Clone the repository
+git clone https://github.com/yourusername/accessibility-testing-framework.git
+cd accessibility-testing-framework
+
+# Install dependencies
 pip install -r requirements.txt
 ```
-3. Run the tests:
+
+### Running Tests
+
 ```
+# Run all tests with dashboard generation
 python run_tests.py
+
+# Test a specific URL
+python accessibility_cli.py --url https://example.com
+
+# Run with options
+python accessibility_cli.py --browser chrome --wcag AA --headless
 ```
-4. View the results in the generated dashboard:
+
+### Viewing Results
+
+After running tests, open the dashboard:
 ```
 reports/dashboard.html
 ```
 
-## Using the CLI
-
-The framework includes a command-line interface for running custom tests:
-
-```
-python accessibility_cli.py --url https://example.com --browser chrome --wcag AA
-```
-
-Available options:
-- `--url` or `-u`: URL to test
-- `--browser` or `-b`: Browser to use (chrome, firefox)
-- `--headless`: Run in headless mode
-- `--wcag` or `-w`: WCAG level to test (A, AA, AAA)
-- `--rules` or `-r`: Specific rules to test (comma-separated)
-- `--output` or `-o`: Output directory for reports
-- `--dashboard`: Generate dashboard after tests
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 accessibility-test-framework/
-├── src/                          # Source code
-│   ├── core/                     # Core functionality
+├── src/                            # Source code
+│   ├── core/                       # Core functionality
 │   │   ├── accessibility_scanner.py  # Main scanner with axe integration
-│   │   └── webdriver_manager.py  # Browser driver handling
-│   ├── pages/                    # Page objects
-│   │   ├── base_page.py          # Base page object
+│   │   └── webdriver_manager.py    # Browser driver handling
+│   ├── pages/                      # Page objects
+│   │   ├── base_page.py            # Base page object
 │   │   └── accessibility_test_page.py  # Extended page with manual checks
-│   └── utils/                    # Utilities
-│       ├── report_utils.py       # Reporting functionality
-│       └── dashboard.py          # Dashboard generator
-├── tests/                        # Test files
-│   ├── config.py                 # Test configuration
-│   ├── test_accessibility.py     # Test cases
-│   └── sites/                    # Test site definitions
-│       └── test_sites.py         # Sample HTML with accessibility issues
-├── reports/                      # Generated reports and screenshots
-├── requirements.txt              # Dependencies
-├── run_tests.py                  # Script to run tests
-└── accessibility_cli.py          # Command-line interface
+│   └── utils/                      # Utilities
+│       ├── report_utils.py         # Reporting functionality
+│       ├── dashboard.py            # Dashboard generator
+│       └── wcag_reference.py       # WCAG guidelines reference
+├── tests/                          # Test files
+│   ├── config.py                   # Test configuration
+│   ├── test_accessibility.py       # Test cases
+│   └── sites/                      # Test site definitions
+│       └── test_sites.py           # Sample HTML with accessibility issues
+├── reports/                        # Generated reports and screenshots
+│   └── screenshots/                # Screenshot directory with .gitkeep
+├── .github/workflows/              # GitHub Actions configuration
+│   └── accessibility-tests.yml     # CI workflow
+├── requirements.txt                # Dependencies
+├── .gitignore                      # Git ignore file
+├── LICENSE                         # MIT License
+├── CONTRIBUTING.md                 # Contribution guidelines
+├── DOCUMENTATION.md                # Detailed documentation
+├── run_tests.py                    # Script to run tests
+├── accessibility_cli.py            # Command-line interface
+├── example.py                      # Example usage script
+└── README.md                       # Project overview with badges and emoji
 ```
 
-## Example Usage
+## 🛠️ Advanced Usage
 
-```python
-from src.core.webdriver_manager import setup_driver
-from src.core.accessibility_scanner import AccessibilityScanner
-from src.pages.accessibility_test_page import AccessibilityTestPage
+### Custom Test Rules
 
-# Setup driver
-driver = setup_driver("chrome")
-
-# Create scanner and page objects
-scanner = AccessibilityScanner(driver)
-page = AccessibilityTestPage(driver)
-
-# Open page
-page.open("https://example.com")
-
-# Run automated scan
-scanner.inject_axe()
-results = scanner.run_full_scan()
-
-# Run manual checks
-manual_results = page.run_manual_accessibility_checks()
-
-# Print violations
-scanner.print_violation_summary(results)
-
-# Clean up
-driver.quit()
+Define specific WCAG rules to test:
+```
+python accessibility_cli.py --rules "image-alt,color-contrast,keyboard"
 ```
 
-## Reports
+### Cross-browser Testing
 
-The framework generates several types of reports:
-- Individual HTML reports for each tested page
-- Rule-specific reports for WCAG criteria
-- Screenshot gallery of testing
-- Interactive dashboard summarizing all tests
+Test on different browsers:
+```
+python accessibility_cli.py --browser firefox
+```
 
-## License
+### Responsive Testing
 
-MIT
+Test at different viewport sizes:
+```
+python run_tests.py
+# The responsive tests are included by default
+```
+
+## 📊 Sample Reports
+
+The framework generates comprehensive reports including:
+
+- 📈 Summary dashboard with test metrics
+- 📷 Screenshots of violations
+- 🔍 Detailed rule explanations
+- 📱 Responsive testing results
+- 🔗 Links to WCAG documentation
+
+## 🤝 Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📚 Documentation
+
+For detailed usage, see [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## 📃 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+💡 **Why Accessibility Matters**: Making the web accessible ensures equal access and opportunity for people with diverse abilities, improving user experience for everyone.

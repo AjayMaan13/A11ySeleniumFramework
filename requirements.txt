@@ -1,6 +1,10 @@
-# requirements.txt
+# Core dependencies
 selenium==4.15.2
 pytest==7.4.3
 pytest-html==4.1.1
 axe-selenium-python==2.1.6
 webdriver-manager==4.0.1
+
+# Optional dependencies for development
+# pytest-cov==4.1.0
+# flake8==6.1.0
