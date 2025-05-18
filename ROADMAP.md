@@ -6,29 +6,26 @@ This project creates an automated accessibility testing framework using Python a
 ## Project Structure
 ```
 accessibility-test-framework/
-├── src/
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── accessibility_scanner.py    # Main scanner with axe integration
-│   │   └── webdriver_manager.py        # Browser driver handling
-│   ├── pages/
-│   │   ├── __init__.py
-│   │   └── base_page.py                # Page object base with accessibility methods
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   └── report_utils.py             # Reporting functionality
-├── tests/
-│   ├── __init__.py
-│   ├── config.py                       # Test configuration settings
-│   ├── test_accessibility.py           # Core accessibility tests
-│   └── sites/                          # Test site definitions
-│       ├── __init__.py
-│       └── test_sites.py
-├── reports/                            # Folder for generated reports
-│   └── .gitkeep
-├── requirements.txt
-├── README.md
-└── run_tests.py                        # Script to execute tests
+├── src/                            # Source code
+│   ├── core/                       # Core functionality
+│   │   ├── accessibility_scanner.py  # Main scanner with axe integration
+│   │   └── webdriver_manager.py    # Browser driver handling
+│   ├── pages/                      # Page objects
+│   │   ├── base_page.py            # Base page object
+│   │   └── accessibility_test_page.py  # Extended page with manual checks
+│   └── utils/                      # Utilities
+│       ├── report_utils.py         # Reporting functionality
+│       └── dashboard.py            # Dashboard generator
+├── tests/                          # Test files
+│   ├── config.py                   # Test configuration
+│   ├── test_accessibility.py       # Test cases
+│   └── sites/                      # Test site definitions
+│       └── test_sites.py           # Sample HTML with accessibility issues
+├── reports/                        # Generated reports and screenshots
+├── .github/workflows/              # GitHub Actions configuration
+├── requirements.txt                # Dependencies
+├── run_tests.py                    # Script to run tests
+└── accessibility_cli.py            # Command-line interface
 ```
 
 ## Timeline (3 Days)
