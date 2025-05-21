@@ -11,7 +11,7 @@ A comprehensive Python-Selenium framework for automated web accessibility testin
 ## ✨ Features
 
 - 🔍 **Automated Scanning** with axe-core integration
-- 🖐️ **Manual Testing** for critical WCAG 2.0 criteria
+- 🖐️ **Manual Testing** for critical WCAG 2.0 criteria and AODA compliance
 - 🧩 **Page Object Model** for maintainable test architecture
 - 🌈 **Cross-browser Support** (Firefox recommended, Chrome supported)
 - 📊 **Visual Reporting** with screenshots and evidence
