@@ -23,12 +23,19 @@ Comprehensive Python-Selenium framework for automated web accessibility testing 
 **Testing:** Page Object Model architecture, cross-browser automation  
 **Reporting:** Visual documentation with screenshots and compliance metrics
 
-## ✅ WCAG Criteria Coverage
+## ✅ WCAG Criteria Coverage (POUR Methodology)
 
+**Perceivable**
 - **1.1.1 Non-text Content** - Images have text alternatives
 - **1.4.3 Contrast** - Sufficient color contrast validation
-- **3.3.2 Labels** - Form elements have proper labels
+
+**Operable**  
 - **2.1.1 Keyboard** - Keyboard accessibility verification
+
+**Understandable**
+- **3.3.2 Labels** - Form elements have proper labels
+
+**Robust**
 - **1.3.1 Info & Relationships** - Proper heading structure
 
 ## 🚀 Quick Start
@@ -93,20 +100,6 @@ page.open("https://example.com")
 scanner.inject_axe()
 results = scanner.run_full_scan()
 ```
-
-### Testing Features
-- **Automated axe-core scanning** for comprehensive WCAG validation
-- **Manual testing integration** for complex accessibility requirements
-- **Page Object Model** ensuring maintainable and scalable test architecture
-- **Cross-browser compatibility** with Firefox and Chrome support
-
-## 📊 Reporting & Analytics
-
-- **Dashboard Generation** - Comprehensive accessibility metrics and violation summaries
-- **Screenshot Evidence** - Visual documentation of accessibility issues
-- **WCAG Compliance** - Detailed rule explanations and remediation guidance
-- **Responsive Analysis** - Multi-device accessibility testing results
-
 ## 🧪 Testing & CI/CD
 
 ```bash
