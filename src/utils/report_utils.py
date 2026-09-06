@@ -97,7 +97,7 @@ def format_violation_for_report(violation):
     help_url = violation.get('helpUrl', '#')
     nodes = violation.get('nodes', [])
     node_count = len(nodes)
-    
+
     # Start building HTML
     html = f"""
     <div class="violation">
@@ -106,18 +106,29 @@ def format_violation_for_report(violation):
         <p><a href="{help_url}" target="_blank">More info</a></p>
         <p>Elements affected: {node_count}</p>
     """
-    
+
     # Add node details if available
     if nodes:
         html += "<ul>"
         for node in nodes[:3]:  # Limit to first 3 for brevity
             html += f"<li>{node.get('html', 'No HTML')}</li>"
-        
+
         if node_count > 3:
             html += f"<li>... and {node_count - 3} more elements</li>"
-        
+
         html += "</ul>"
-    
+
+    # Only rendered when AI suggestions were requested (--ai-suggestions) and succeeded
+    ai_suggestion = violation.get('ai_suggestion')
+    if ai_suggestion:
+        priority = ai_suggestion.get('priority', 'unknown')
+        fix = ai_suggestion.get('fix', '')
+        html += f"""
+        <div class="ai-suggestion ai-priority-{priority}">
+            <strong>AI Suggested Fix ({priority} priority):</strong> {fix}
+        </div>
+        """
+
     html += "</div>"
     return html
 
@@ -156,6 +167,10 @@ def generate_simple_report(results, output_file="reports/accessibility_report.ht
             .summary { background-color: #f5f5f5; padding: 10px; border-radius: 5px; }
             .violation { background-color: #fff0f0; padding: 10px; margin: 10px 0; border-left: 4px solid #ff0000; }
             .pass { background-color: #f0fff0; padding: 5px; margin: 5px 0; border-left: 4px solid #00ff00; }
+            .ai-suggestion { background-color: #eef6ff; padding: 8px; margin-top: 10px; border-left: 4px solid #0066cc; }
+            .ai-priority-high { border-left-color: #cc0000; }
+            .ai-priority-medium { border-left-color: #cc8800; }
+            .ai-priority-low { border-left-color: #0066cc; }
         </style>
     </head>
     <body>

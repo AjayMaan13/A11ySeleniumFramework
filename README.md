@@ -20,7 +20,8 @@ Comprehensive Python-Selenium framework for automated web accessibility testing 
 
 **Core:** Python 3.9+, Selenium WebDriver, PyTest framework  
 **Accessibility:** axe-core accessibility engine for WCAG 2.0 validation  
-**Testing:** Page Object Model architecture, cross-browser automation  
+**Testing:** Page Object Model architecture, cross-browser automation, pytest-bdd (Gherkin/BDD layer)  
+**AI:** Anthropic Python SDK (`anthropic`) for optional AI-driven remediation suggestions  
 **Reporting:** Visual documentation with screenshots and compliance metrics
 
 ## ✅ WCAG Criteria Coverage (POUR Methodology)
@@ -108,6 +109,36 @@ python accessibility_cli.py --browser firefox  # Recommended for macOS
 python accessibility_cli.py --browser chrome   # Windows/Linux
 
 # GitHub Actions integration for continuous accessibility testing
+```
+
+## 🤖 AI-Driven Testing
+
+The `--ai-suggestions` flag sends each scan's axe-core violations (WCAG tags, description, and affected HTML snippet) to the Anthropic API in a single batched request per scan, and adds a plain-English `ai_suggestion` (a one-sentence fix plus a high/medium/low priority) to each violation before the HTML report is generated. It requires an `ANTHROPIC_API_KEY` environment variable; if the key is missing or the API call fails, the flag has no effect beyond a logged warning — violation detection and the rest of the test run are unaffected.
+
+```bash
+export ANTHROPIC_API_KEY=your-api-key
+python accessibility_cli.py --url https://example.com --ai-suggestions
+```
+
+## 🥒 BDD Testing
+
+A Gherkin/BDD layer built on `pytest-bdd` sits alongside the existing pytest suite in `tests/features/`, expressing the same axe-core scans as readable scenarios (`tests/features/accessibility.feature`) with step definitions in `tests/features/test_accessibility_steps.py`. It runs independently of `tests/test_accessibility.py` — neither replaces the other.
+
+```bash
+# Run only the BDD scenarios
+pytest tests/features/
+
+# Run everything (original suite + BDD layer)
+pytest
+```
+
+## 🔗 Traceability Matrix
+
+The `--traceability` flag generates `reports/traceability_report.html`, mapping each tested WCAG criterion to its fixture page, the test function that exercises it, and its pass/fail status from the run. Criterion descriptions are sourced directly from `src/utils/wcag_reference.py`, and pass/fail status comes from pytest's own `--junitxml` output, so nothing here is hand-maintained or duplicated.
+
+```bash
+python accessibility_cli.py --traceability
+open reports/traceability_report.html
 ```
 
 ## 📈 Performance Metrics

@@ -8,6 +8,7 @@ from pathlib import Path
 # Import from our project
 from src.core.webdriver_manager import setup_driver, teardown_driver
 from src.core.accessibility_scanner import AccessibilityScanner
+from src.core.ai_analyzer import get_ai_remediation
 from src.pages.base_page import BasePage
 from src.pages.accessibility_test_page import AccessibilityTestPage
 from src.utils.report_utils import take_screenshot, highlight_element, generate_simple_report
@@ -88,7 +89,11 @@ def test_public_site_accessibility(driver, url):
         
         # Run scan with standard rules
         results = scanner.run_full_scan()
-        
+
+        # Optionally enrich violations with AI remediation guidance (off by default)
+        if os.environ.get("TEST_AI_SUGGESTIONS") == "1" and results:
+            results["violations"] = get_ai_remediation(results.get("violations", []))
+
         # Generate basic report
         report_path = f"reports/accessibility_{url.replace('https://', '').replace('http://', '').replace('/', '_')}.html"
         generate_simple_report(results, report_path)
@@ -148,7 +153,11 @@ def test_local_site_accessibility(driver, url):
         
         # Run scan with custom options
         results = scanner.run_custom_scan(options=custom_options)
-        
+
+        # Optionally enrich violations with AI remediation guidance (off by default)
+        if os.environ.get("TEST_AI_SUGGESTIONS") == "1" and results:
+            results["violations"] = get_ai_remediation(results.get("violations", []))
+
         # Generate detailed report
         filename = Path(url).name
         report_path = f"reports/accessibility_{filename}.html"

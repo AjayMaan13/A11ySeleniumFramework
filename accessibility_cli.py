@@ -61,7 +61,21 @@ def main():
         help="Generate dashboard after tests",
         action="store_true"
     )
-    
+
+    parser.add_argument(
+        "--ai-suggestions",
+        help="Use the Anthropic API to add plain-English remediation suggestions to violations (requires ANTHROPIC_API_KEY)",
+        action="store_true",
+        default=False
+    )
+
+    parser.add_argument(
+        "--traceability",
+        help="Generate a WCAG criterion -> fixture page -> test function traceability report after the run",
+        action="store_true",
+        default=False
+    )
+
     # Parse arguments
     args = parser.parse_args()
     
@@ -84,24 +98,47 @@ def main():
     
     if args.output:
         os.environ["TEST_OUTPUT"] = args.output
-    
+
+    if args.ai_suggestions:
+        os.environ["TEST_AI_SUGGESTIONS"] = "1"
+
     # Prepare pytest arguments
     pytest_args = ["-v"]
-    
+
     # Add HTML report
     report_path = os.path.join(args.output, "report.html")
     pytest_args.extend(["--html", report_path])
-    
+
+    # Traceability needs per-test pass/fail status, which pytest's built-in
+    # junitxml output gives us without adding a new dependency.
+    junit_path = os.path.join(args.output, "junit.xml")
+    if args.traceability:
+        pytest_args.extend(["--junitxml", junit_path])
+
     # Run tests
     print(f"Running accessibility tests...")
     result = pytest.main(pytest_args)
-    
+
     # Generate dashboard if requested
     if args.dashboard or True:  # Always generate dashboard for now
         print("Generating dashboard...")
         dashboard_path = create_dashboard(args.output)
         print(f"Dashboard available at: {dashboard_path}")
-    
+
+    if args.traceability:
+        from src.utils.traceability import (
+            generate_traceability_matrix,
+            parse_junit_results,
+            render_traceability_report,
+        )
+
+        print("Generating traceability matrix...")
+        test_results = parse_junit_results(junit_path)
+        matrix = generate_traceability_matrix(test_results)
+        traceability_path = os.path.join(args.output, "traceability_report.html")
+        render_traceability_report(matrix, traceability_path)
+        print(f"Traceability report available at: {traceability_path}")
+
     # Return exit code
     return result
 
