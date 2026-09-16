@@ -11,6 +11,27 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 
 
+def _resolve_chromedriver_binary(path):
+    """
+    Work around a known webdriver_manager bug: for newer Chrome-for-Testing
+    driver archives, ChromeDriverManager().install() can return the path to
+    THIRD_PARTY_NOTICES.chromedriver (a text file) instead of the actual
+    chromedriver binary, which sits right next to it in the same directory.
+    """
+    if os.path.basename(path) not in ("chromedriver", "chromedriver.exe"):
+        driver_dir = os.path.dirname(path)
+        for name in ("chromedriver", "chromedriver.exe"):
+            candidate = os.path.join(driver_dir, name)
+            if os.path.exists(candidate):
+                path = candidate
+                break
+
+    if not os.access(path, os.X_OK):
+        os.chmod(path, 0o755)
+
+    return path
+
+
 def setup_driver(browser="chrome", headless=False):
     """
     Setup and configure WebDriver
@@ -45,7 +66,8 @@ def setup_driver(browser="chrome", headless=False):
                 driver = webdriver.Chrome(service=chrome_service, options=options)
             else:
                 # Standard setup for other platforms
-                chrome_service = ChromeService(ChromeDriverManager().install())
+                driver_path = _resolve_chromedriver_binary(ChromeDriverManager().install())
+                chrome_service = ChromeService(driver_path)
                 driver = webdriver.Chrome(service=chrome_service, options=options)
             
             return driver
