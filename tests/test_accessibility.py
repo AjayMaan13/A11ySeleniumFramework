@@ -14,7 +14,7 @@ from src.pages.accessibility_test_page import AccessibilityTestPage
 from src.utils.report_utils import take_screenshot, highlight_element, generate_simple_report
 
 # Import configuration
-from tests.config import TEST_URLS, BROWSER, HEADLESS, AXE_RULES
+from tests.config import TEST_URLS, BROWSER, HEADLESS, AXE_RULES, TARGETS, WCAG_LEVEL_TAGS
 from tests.sites.test_sites import create_test_pages
 
 
@@ -120,34 +120,38 @@ def test_public_site_accessibility(driver, url):
 
 
 # Test accessibility on local files
-@pytest.mark.parametrize("url", TEST_URLS["local"])
-def test_local_site_accessibility(driver, url):
+# Driven by data/targets.json - add a row there to test a new page, no code change needed.
+@pytest.mark.parametrize("target", TARGETS, ids=[t["url"] for t in TARGETS])
+def test_local_site_accessibility(driver, target):
     """Test accessibility on local test pages"""
+    url = target["url"]
+    expected_wcag_level = target.get("expected_wcag_level", "AA")
+
     # Check if specific URL is specified in environment variable
     test_url = os.environ.get("TEST_URL", None)
     if test_url and url != test_url:
         pytest.skip(f"Skipping {url}, only testing {test_url}")
-    
+
     # Create scanner and page objects
     scanner = AccessibilityScanner(driver)
     page = AccessibilityTestPage(driver)  # Using the extended page object
-    
+
     # Navigate to the test URL
     page.open(url)
-    
+
     # Let page load completely
     time.sleep(1)
-    
+
     # Run accessibility scan
     try:
         # Inject axe-core
         scanner.inject_axe()
-        
-        # Create a custom set of rules to check
+
+        # Create a custom set of rules to check, based on this target's expected WCAG level
         custom_options = {
             'runOnly': {
                 'type': 'tag',
-                'values': ['wcag2a', 'wcag2aa']
+                'values': WCAG_LEVEL_TAGS.get(expected_wcag_level, WCAG_LEVEL_TAGS["AA"])
             }
         }
         

@@ -1,0 +1,14 @@
+[
+  {
+    "url": "tests/sites/missing_alt.html",
+    "expected_wcag_level": "AA"
+  },
+  {
+    "url": "tests/sites/contrast_issues.html",
+    "expected_wcag_level": "AA"
+  },
+  {
+    "url": "tests/sites/form_labels.html",
+    "expected_wcag_level": "AA"
+  }
+]

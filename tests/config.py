@@ -1,5 +1,31 @@
 # Test configuration file
 
+import json
+import os
+from urllib.request import pathname2url
+
+# Data-driven local targets: add a row to data/targets.json to test a new
+# page, no code changes needed (mirrors an Input Data Sheet pattern).
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TARGETS_PATH = os.path.join(_PROJECT_ROOT, "data", "targets.json")
+
+with open(_TARGETS_PATH) as _targets_file:
+    TARGETS = json.load(_targets_file)
+
+# Resolve local (non-http) target paths to absolute file:// URLs so tests
+# work regardless of the current working directory.
+for _target in TARGETS:
+    if not _target["url"].startswith(("http://", "https://", "file://")):
+        _abs_path = os.path.join(_PROJECT_ROOT, _target["url"])
+        _target["url"] = "file:" + pathname2url(_abs_path)
+
+# WCAG level -> axe-core tags a target's expected_wcag_level maps to
+WCAG_LEVEL_TAGS = {
+    "A": ["wcag2a"],
+    "AA": ["wcag2a", "wcag2aa"],
+    "AAA": ["wcag2a", "wcag2aa", "wcag2aaa"],
+}
+
 # URLs to test - a mix of public sites and local files
 TEST_URLS = {
     # Public sites known to have some accessibility issues
@@ -8,13 +34,9 @@ TEST_URLS = {
         "https://www.w3.org/WAI/demos/bad/",  # W3C's "Before and After" demo site
         "https://dequeuniversity.com/demo/mars/"  # Deque's Mars Commuter demo site
     ],
-    
-    # Local test files - these will be created in the tests/sites directory
-    "local": [
-        "file:///tests/sites/missing_alt.html",
-        "file:///tests/sites/contrast_issues.html",
-        "file:///tests/sites/form_labels.html"
-    ]
+
+    # Local test files - sourced from data/targets.json
+    "local": [t["url"] for t in TARGETS]
 }
 
 # Browser configuration
