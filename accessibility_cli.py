@@ -7,6 +7,51 @@ import pytest
 from src.utils.dashboard import create_dashboard
 
 
+def run_triage_cli(args):
+    """
+    Scan the configured targets and file GitHub issues for ticket-worthy
+    violation groups. Separate from the pytest-based flow in main() since
+    it drives its own scan rather than asserting pass/fail on test pages.
+
+    Returns:
+        0 on success, 1 if a required credential/argument is missing.
+    """
+    github_token = os.environ.get("GITHUB_TOKEN")
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+
+    if not args.repo:
+        print("Error: --triage requires --repo owner/name")
+        return 1
+    if not github_token:
+        print("Error: --triage requires a GITHUB_TOKEN environment variable")
+        return 1
+    if not anthropic_key:
+        print("Error: --triage requires an ANTHROPIC_API_KEY environment variable")
+        return 1
+
+    from src.agent.llm_client import LLMClient
+    from src.agent.ticket_dedup import DedupStore
+    from src.agent.triage import collect_violations, run_triage
+    from src.integrations.github_issues import GitHubIssueCreator
+
+    print("Scanning configured targets (data/targets.json)...")
+    violations = collect_violations(browser=args.browser, headless=args.headless)
+    print(f"Found {len(violations)} raw violations across targets.")
+
+    llm = LLMClient(api_key=anthropic_key)
+    dedup = DedupStore()
+    ticketer = GitHubIssueCreator(token=github_token, repo_name=args.repo)
+
+    filed = run_triage(violations, llm, dedup, ticketer)
+
+    if filed:
+        print(f"Filed {len(filed)} new issue(s) on {args.repo}: {filed}")
+    else:
+        print("No new tickets filed (nothing ticket-worthy, or already tracked).")
+
+    return 0
+
+
 def main():
     """
     Command line interface for running accessibility tests
@@ -76,8 +121,27 @@ def main():
         default=False
     )
 
+    parser.add_argument(
+        "--triage",
+        help="Scan the configured targets (data/targets.json), group and prioritize "
+             "violations, and file a GitHub issue for each ticket-worthy group "
+             "(requires GITHUB_TOKEN and ANTHROPIC_API_KEY env vars, and --repo). "
+             "Runs instead of the pytest suite.",
+        action="store_true",
+        default=False
+    )
+
+    parser.add_argument(
+        "--repo",
+        help="GitHub repo to file --triage tickets against, as owner/name",
+        default=None
+    )
+
     # Parse arguments
     args = parser.parse_args()
+
+    if args.triage:
+        return run_triage_cli(args)
     
     # Update configuration based on arguments
     if args.url:
