@@ -51,3 +51,6 @@ chromedriver.log
 # Test cache
 .pytest_cache/
 .coverage
+
+# Triage agent runtime state
+data/dedup.db
